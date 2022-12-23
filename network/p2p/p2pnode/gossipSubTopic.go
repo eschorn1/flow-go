@@ -2,6 +2,7 @@ package p2pnode
 
 import (
 	"context"
+	"github.com/onflow/flow-go/singleton"
 
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 
@@ -31,6 +32,7 @@ func (g *GossipSubTopic) Close() error {
 }
 
 func (g *GossipSubTopic) Publish(ctx context.Context, bytes []byte) error {
+	singleton.GetSingle().Attach_GossipSubTopic_PublishFunc(g.Publish)
 	return g.t.Publish(ctx, bytes)
 }
 

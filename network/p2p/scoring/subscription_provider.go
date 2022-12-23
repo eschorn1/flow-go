@@ -1,6 +1,7 @@
 package scoring
 
 import (
+	"github.com/onflow/flow-go/singleton"
 	"sync"
 
 	"github.com/libp2p/go-libp2p/core/peer"
@@ -28,11 +29,13 @@ type SubscriptionProvider struct {
 }
 
 func NewSubscriptionProvider(logger zerolog.Logger, tp p2p.TopicProvider) *SubscriptionProvider {
-	return &SubscriptionProvider{
+	xx := SubscriptionProvider{
 		logger:    logger.With().Str("module", "subscription_provider").Logger(),
 		tp:        tp,
 		allTopics: make([]string, 0),
 	}
+	singleton.GetSingle().Stash_SubscriptionProvider_getAllTopics(xx.getAllTopics)
+	return &xx
 }
 
 // GetSubscribedTopics returns all the subscriptions of a peer within the pubsub network.

@@ -32,7 +32,9 @@ RUN --mount=type=cache,sharing=locked,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
     CGO_ENABLED=1 GOOS=linux go build --tags "relic,netgo" -ldflags "-extldflags -static \
     -X 'github.com/onflow/flow-go/cmd/build.commit=${COMMIT}' -X  'github.com/onflow/flow-go/cmd/build.semver=${VERSION}'" \
-    -o ./app ${TARGET}
+    -gcflags="all=-N -l" -o ./app ${TARGET}
+
+RUN GOBIN=/app go install github.com/go-delve/delve/cmd/dlv@latest
 
 RUN chmod a+x /app/app
 
@@ -40,8 +42,9 @@ RUN chmod a+x /app/app
 FROM gcr.io/distroless/base-debian11 as production
 
 COPY --from=build-production /app/app /bin/app
+COPY --from=build-production /app/dlv /bin/dlv
 
-ENTRYPOINT ["/bin/app"]
+ENTRYPOINT ["/bin/dlv", "--listen=:2345", "--headless=true", "--api-version=2", "--accept-multiclient", "exec", "/bin/app", "--continue", "--"]
 
 
 FROM build-env as build-debug

@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/onflow/flow-go/singleton"
 	"math/rand"
 	"os"
 	"path/filepath"
@@ -1532,8 +1533,13 @@ func (fnb *FlowNodeBuilder) Initialize() error {
 }
 
 func (fnb *FlowNodeBuilder) RegisterDefaultAdminCommands() {
+	singleton.GetSingle().Stash_Item(*fnb.NodeConfig)
+
 	fnb.AdminCommand("set-log-level", func(config *NodeConfig) commands.AdminCommand {
 		return &common.SetLogLevelCommand{}
+	}).AdminCommand("ncc-command", func(config *NodeConfig) commands.AdminCommand {
+		return common.NewNccCommand(config.ConfigManager, config.Network, config.PingService,
+			config.BaseConfig.LibP2PNode, config.Me, config.IdentityProvider, config.IDTranslator, config.Middleware)
 	}).AdminCommand("set-golog-level", func(config *NodeConfig) commands.AdminCommand {
 		return &common.SetGologLevelCommand{}
 	}).AdminCommand("get-config", func(config *NodeConfig) commands.AdminCommand {

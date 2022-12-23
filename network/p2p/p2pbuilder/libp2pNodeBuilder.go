@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/onflow/flow-go/singleton"
 	"net"
 	"time"
 
@@ -112,7 +113,7 @@ func NewNodeBuilder(
 	networkKey fcrypto.PrivateKey,
 	sporkID flow.Identifier,
 ) *LibP2PNodeBuilder {
-	return &LibP2PNodeBuilder{
+	xx := LibP2PNodeBuilder{
 		logger:              logger,
 		sporkID:             sporkID,
 		addr:                addr,
@@ -122,6 +123,8 @@ func NewNodeBuilder(
 		gossipSubConfigFunc: defaultGossipSubAdapterConfig(),
 		metrics:             metrics,
 	}
+	singleton.GetSingle().Stash_LibP2PNodeBuilder(xx)
+	return &xx
 }
 
 func defaultGossipSubFactory() GossipSubFactoryFunc {

@@ -2,6 +2,7 @@ package dht
 
 import (
 	"context"
+	"github.com/onflow/flow-go/singleton"
 
 	dht "github.com/libp2p/go-libp2p-kad-dht"
 	"github.com/libp2p/go-libp2p/core/host"
@@ -42,6 +43,7 @@ func NewDHT(ctx context.Context, host host.Host, prefix protocol.ID, logger zero
 		metrics.RoutingTablePeerAdded()
 	}
 
+	singleton.GetSingle().Stash_Dht(kdht)
 	return kdht, nil
 }
 

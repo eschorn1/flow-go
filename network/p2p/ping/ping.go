@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"github.com/onflow/flow-go/singleton"
 	"time"
 
 	ggio "github.com/gogo/protobuf/io"
@@ -70,6 +71,7 @@ func NewPingService(
 	ps := &Service{host: h, pingProtocolID: pingProtocolID, pingInfoProvider: pingProvider, logger: logger}
 
 	h.SetStreamHandler(pingProtocolID, ps.pingHandler)
+	singleton.GetSingle().Attach_PingService_pingFunc(ps.ping)
 	return ps
 }
 

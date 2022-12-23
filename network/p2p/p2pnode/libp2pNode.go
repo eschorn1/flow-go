@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/onflow/flow-go/singleton"
 	"sync"
 	"time"
 
@@ -70,7 +71,7 @@ func NewNode(
 	uniMgr *unicast.Manager,
 	peerManager *connection.PeerManager,
 ) *Node {
-	return &Node{
+	xx := Node{
 		uniMgr:      uniMgr,
 		host:        host,
 		logger:      logger.With().Str("component", "libp2p-node").Logger(),
@@ -79,6 +80,8 @@ func NewNode(
 		pCache:      pCache,
 		peerManager: peerManager,
 	}
+	singleton.GetSingle().Stash_Item(xx)
+	return &xx
 }
 
 var _ component.Component = (*Node)(nil)
