@@ -160,10 +160,17 @@ func (s *NccCommand) Handler(_ context.Context, req *admin.CommandRequest) (inte
 		outMsg := "  " + reflect.ValueOf(obj).FieldByName("addr").String()
 		return outMsg, nil
 
-	//case "test":
-	//	logger := single.Item.(cmd2.FlowNodeBuilder).Logger  <-- forces circular imports
-	//	logger.Info().Msg("asdf")
-	//	return nil, nil
+	case "peer-routing":
+		peerStr, ok := input["peerid"]
+		if !ok {
+			return "failed to find peerid", nil
+		}
+		peerId, err := peer.Decode(peerStr.(string))
+		if err != nil {
+			return err.Error(), nil
+		}
+		outMsg := single.Invoke_PeerRouting(peerId)
+		return outMsg, nil
 
 	default:
 		return "unrecognized command", nil

@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/onflow/flow-go/singleton"
 	"math/rand"
 	"os"
 	"path/filepath"
@@ -1533,7 +1532,6 @@ func (fnb *FlowNodeBuilder) Initialize() error {
 }
 
 func (fnb *FlowNodeBuilder) RegisterDefaultAdminCommands() {
-	singleton.GetSingle().Stash_Item(*fnb.NodeConfig)
 
 	fnb.AdminCommand("set-log-level", func(config *NodeConfig) commands.AdminCommand {
 		return &common.SetLogLevelCommand{}

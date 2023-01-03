@@ -26,6 +26,12 @@ def ping(target_ip, peer_id):
     return json.loads(r.text)["output"]
 
 
+def peer_routing(target_ip, peer_id):
+    payload = {'commandName': 'ncc-command', 'data': {"cmd": "peer-routing", "peerid": peer_id}}
+    r = requests.post(f"http://{target_ip}:9002/admin/run_command", json.dumps(payload))
+    return json.loads(r.text)["output"]
+
+
 # This exercises a private function on the node side
 def private_ping(target_ip, peer_id):
     payload = {'commandName': 'ncc-command', 'data': {"cmd": "private-ping", "peerid": peer_id}}

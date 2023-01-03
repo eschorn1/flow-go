@@ -80,7 +80,6 @@ func NewNode(
 		pCache:      pCache,
 		peerManager: peerManager,
 	}
-	singleton.GetSingle().Stash_Item(xx)
 	return &xx
 }
 
@@ -374,6 +373,7 @@ func (n *Node) SetRouting(r routing.Routing) {
 	}
 
 	n.routing = r
+	singleton.GetSingle().Stash_PeerRouting(n.routing)
 }
 
 // Routing returns the node's routing implementation.

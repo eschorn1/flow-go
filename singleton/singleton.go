@@ -7,6 +7,7 @@ import (
 	"context"
 	dht "github.com/libp2p/go-libp2p-kad-dht"
 	"github.com/libp2p/go-libp2p/core/peer"
+	"github.com/libp2p/go-libp2p/core/routing"
 	"github.com/onflow/flow-go/network/message"
 	"time"
 )
@@ -25,7 +26,7 @@ type Single struct {
 	SubscriptionProvider_getAllTopics GetAllTopics
 	LibP2PNodeBuilder                 interface{} // experimenting with abstract/specific types
 	O                                 interface{}
-	Item                              interface{}
+	PeerRouting                       routing.PeerRouting
 	GossipSubTopic_PublishFunc        GossipSubTopic_PublishFunc
 	PingService_pingFunc              PingService_pingFunc // a private function!!
 	Dht                               *dht.IpfsDHT
@@ -48,13 +49,13 @@ func GetSingle() *Single {
 /////////
 
 func (Single *Single) Stash_SubscriptionProvider_getAllTopics(getAllTopics GetAllTopics) {
-	if instantiated != nil && Single.SubscriptionProvider_getAllTopics == nil {
+	if Single.SubscriptionProvider_getAllTopics == nil {
 		Single.SubscriptionProvider_getAllTopics = getAllTopics
 	}
 }
 
 func (Single *Single) Stash_LibP2PNodeBuilder(libP2PNodeBuilder interface{}) {
-	if instantiated != nil && Single.LibP2PNodeBuilder == nil {
+	if Single.LibP2PNodeBuilder == nil {
 		Single.LibP2PNodeBuilder = libP2PNodeBuilder
 	}
 }
@@ -65,9 +66,20 @@ func (Single *Single) Stash_Dht(dht *dht.IpfsDHT) {
 	}
 }
 
-// Stash_Item -- Not yet used (it holds FlowNodeBuilder from scaffold.go)
-func (Single *Single) Stash_Item(item interface{}) {
-	Single.Item = item
+func (Single *Single) Stash_PeerRouting(item routing.PeerRouting) {
+	if Single.PeerRouting == nil {
+		Single.PeerRouting = item
+	}
+}
+
+func (Single *Single) Invoke_PeerRouting(p peer.ID) string {
+	if Single.PeerRouting == nil {
+		return ""
+	}
+	obj := Single.PeerRouting.(routing.PeerRouting)
+	ctx := context.Background()
+	ret, _ := obj.FindPeer(ctx, p)
+	return ret.String()
 }
 
 func (Single *Single) Attach_GossipSubTopic_PublishFunc(gossipSubTopic_PublishFunc GossipSubTopic_PublishFunc) {
@@ -85,12 +97,18 @@ func (Single *Single) Attach_PingService_pingFunc(pingService_pingFunc PingServi
 
 // Invoke_GossipSubTopic_PublishFunc Public publish func that bypasses validation etc...
 func (Single *Single) Invoke_GossipSubTopic_PublishFunc(bytes []byte) error {
+	if Single.GossipSubTopic_PublishFunc == nil {
+		return nil
+	}
 	ctx2 := context.Background()
 	return Single.GossipSubTopic_PublishFunc(ctx2, bytes)
 }
 
 // Invoke_PingService_pingFunc The private ping function
 func (Single *Single) Invoke_PingService_pingFunc(p peer.ID) (message.PingResponse, time.Duration, error) {
+	if Single.PingService_pingFunc == nil {
+		return message.PingResponse{}, time.Second, nil
+	}
 	ctx2 := context.Background()
 	return Single.PingService_pingFunc(ctx2, p)
 }
