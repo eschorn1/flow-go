@@ -49,7 +49,7 @@ func GetSingle() *Single {
 /////////
 
 func (Single *Single) Stash_SubscriptionProvider_getAllTopics(getAllTopics GetAllTopics) {
-	if Single.SubscriptionProvider_getAllTopics == nil {
+	if Single.SubscriptionProvider_getAllTopics == nil { // "re-stashing" really isn't a problem...should remove
 		Single.SubscriptionProvider_getAllTopics = getAllTopics
 	}
 }
@@ -72,16 +72,6 @@ func (Single *Single) Stash_PeerRouting(item routing.PeerRouting) {
 	}
 }
 
-func (Single *Single) Invoke_PeerRouting(p peer.ID) string {
-	if Single.PeerRouting == nil {
-		return ""
-	}
-	obj := Single.PeerRouting.(routing.PeerRouting)
-	ctx := context.Background()
-	ret, _ := obj.FindPeer(ctx, p)
-	return ret.String()
-}
-
 func (Single *Single) Attach_GossipSubTopic_PublishFunc(gossipSubTopic_PublishFunc GossipSubTopic_PublishFunc) {
 	if Single.GossipSubTopic_PublishFunc == nil {
 		Single.GossipSubTopic_PublishFunc = gossipSubTopic_PublishFunc
@@ -93,6 +83,16 @@ func (Single *Single) Attach_PingService_pingFunc(pingService_pingFunc PingServi
 	if Single.PingService_pingFunc == nil {
 		Single.PingService_pingFunc = pingService_pingFunc
 	}
+}
+
+func (Single *Single) Invoke_PeerRouting(p peer.ID) string {
+	if Single.PeerRouting == nil {
+		return "routing.PeerRouting has not been attached yet"
+	}
+	obj := Single.PeerRouting.(routing.PeerRouting)
+	ctx := context.Background()
+	ret, _ := obj.FindPeer(ctx, p)
+	return ret.String()
 }
 
 // Invoke_GossipSubTopic_PublishFunc Public publish func that bypasses validation etc...
