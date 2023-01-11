@@ -39,8 +39,26 @@ def private_ping(target_ip, peer_id):
     return json.loads(r.text)["output"]
 
 
+def libp2p_createstream(target_ip, peer_id):
+    payload = {'commandName': 'ncc-command', 'data': {"cmd": "libp2p-createStream", "peerid": peer_id}}
+    r = requests.post(f"http://{target_ip}:9002/admin/run_command", json.dumps(payload))
+    return json.loads(r.text)["output"]
+
+
 def dht_peers(target_ip):
     payload = {'commandName': 'ncc-command', 'data': {"cmd": "dump-dht"}}
+    r = requests.post(f"http://{target_ip}:9002/admin/run_command", json.dumps(payload))
+    return json.loads(r.text)["output"]
+
+
+def dht_forcerefresh(target_ip):
+    payload = {'commandName': 'ncc-command', 'data': {"cmd": "dht-forcerefresh"}}
+    r = requests.post(f"http://{target_ip}:9002/admin/run_command", json.dumps(payload))
+    return json.loads(r.text)["output"]
+
+
+def libp2p_addPeer(target_ip, peerInfo):
+    payload = {'commandName': 'ncc-command', 'data': {"cmd": "libp2p-addPeer", "peerInfo": peerInfo}}
     r = requests.post(f"http://{target_ip}:9002/admin/run_command", json.dumps(payload))
     return json.loads(r.text)["output"]
 

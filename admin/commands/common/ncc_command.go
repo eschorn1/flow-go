@@ -11,7 +11,6 @@ import (
 	"github.com/onflow/flow-go/network"
 	"github.com/onflow/flow-go/network/channels"
 	"github.com/onflow/flow-go/network/p2p"
-	"github.com/onflow/flow-go/network/p2p/p2pbuilder"
 	"github.com/onflow/flow-go/singleton"
 	"reflect"
 	"strconv"
@@ -75,6 +74,10 @@ func (s *NccCommand) Handler(_ context.Context, req *admin.CommandRequest) (inte
 			result = append(result, peer.String())
 		}
 		return commands.ConvertToInterfaceList(result)
+
+	case "dht-forcerefresh": // for use with WireShark
+		single.Dht.ForceRefresh()
+		return "thanks friend", nil
 
 	case "ping-peerid":
 		nodeid, ok := input["peerid"]
@@ -155,10 +158,40 @@ func (s *NccCommand) Handler(_ context.Context, req *admin.CommandRequest) (inte
 		}
 		return outMsg, nil
 
-	case "libp2p": // under development
-		obj := single.LibP2PNodeBuilder.(p2pbuilder.LibP2PNodeBuilder)
+	case "libp2p-addPeer": // under development
+		peerStr, ok := input["peerInfo"]
+		if !ok {
+			return "failed to find peerInfo", nil
+		}
+		peerInfo, err := peer.AddrInfoFromString(peerStr.(string))
+		if err != nil {
+			return err.Error(), nil
+		}
+		obj := single.LibP2PNode
+		err = obj.AddPeer(context.Background(), *peerInfo)
+		if err != nil {
+			return err.Error(), err
+		}
 		outMsg := "  " + reflect.ValueOf(obj).FieldByName("addr").String()
 		return outMsg, nil
+
+	case "libp2p-createStream":
+		peerStr, ok := input["peerid"]
+		if !ok {
+			return "failed to find peerid", nil
+		}
+		peerId, err := peer.Decode(peerStr.(string))
+		if err != nil {
+			return err.Error(), nil
+		}
+		obj := single.LibP2PNode
+		stream, err := obj.CreateStream(context.Background(), peerId)
+		if err != nil {
+			return err.Error(), err
+		}
+		result := make(map[string]any, 1)
+		result["stream"] = stream.ID()
+		return result, nil
 
 	case "peer-routing":
 		peerStr, ok := input["peerid"]

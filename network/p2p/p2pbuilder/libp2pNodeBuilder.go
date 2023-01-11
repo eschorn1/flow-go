@@ -123,7 +123,7 @@ func NewNodeBuilder(
 		gossipSubConfigFunc: defaultGossipSubAdapterConfig(),
 		metrics:             metrics,
 	}
-	singleton.GetSingle().Stash_LibP2PNodeBuilder(xx)
+	//singleton.GetSingle().Stash_LibP2PNodeBuilder(xx)
 	return &xx
 }
 
@@ -317,7 +317,7 @@ func (builder *LibP2PNodeBuilder) Build() (p2p.LibP2PNode, error) {
 		Build()
 
 	node.SetComponentManager(cm)
-
+	singleton.GetSingle().Stash_LibP2PNode(node)
 	return node, nil
 }
 

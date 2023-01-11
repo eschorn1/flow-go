@@ -9,6 +9,7 @@ import (
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/libp2p/go-libp2p/core/routing"
 	"github.com/onflow/flow-go/network/message"
+	"github.com/onflow/flow-go/network/p2p"
 	"time"
 )
 
@@ -24,7 +25,7 @@ type GetAllTopics func() []string
 // Single -- Items we want to attach, then access and maybe invoke
 type Single struct {
 	SubscriptionProvider_getAllTopics GetAllTopics
-	LibP2PNodeBuilder                 interface{} // experimenting with abstract/specific types
+	LibP2PNode                        p2p.LibP2PNode
 	O                                 interface{}
 	PeerRouting                       routing.PeerRouting
 	GossipSubTopic_PublishFunc        GossipSubTopic_PublishFunc
@@ -54,10 +55,8 @@ func (Single *Single) Stash_SubscriptionProvider_getAllTopics(getAllTopics GetAl
 	}
 }
 
-func (Single *Single) Stash_LibP2PNodeBuilder(libP2PNodeBuilder interface{}) {
-	if Single.LibP2PNodeBuilder == nil {
-		Single.LibP2PNodeBuilder = libP2PNodeBuilder
-	}
+func (Single *Single) Stash_LibP2PNode(libP2PNode p2p.LibP2PNode) {
+	Single.LibP2PNode = libP2PNode
 }
 
 func (Single *Single) Stash_Dht(dht *dht.IpfsDHT) {
