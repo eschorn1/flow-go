@@ -150,7 +150,7 @@ func (s *NccCommand) Handler(_ context.Context, req *admin.CommandRequest) (inte
 		result["time"] = time.String()
 		return result, nil
 
-	case "getAllTopics": // under development
+	case "getAllTopics":
 		xx := single.SubscriptionProvider_getAllTopics()
 		outMsg := ""
 		for i, x := range xx {
@@ -158,7 +158,7 @@ func (s *NccCommand) Handler(_ context.Context, req *admin.CommandRequest) (inte
 		}
 		return outMsg, nil
 
-	case "libp2p-addPeer": // under development
+	case "libp2p-addPeer":
 		peerStr, ok := input["peerInfo"]
 		if !ok {
 			return "failed to find peerInfo", nil
@@ -204,6 +204,35 @@ func (s *NccCommand) Handler(_ context.Context, req *admin.CommandRequest) (inte
 		}
 		outMsg := single.Invoke_PeerRouting(peerId)
 		return outMsg, nil
+
+	case "wire-send":
+		//peerStr, ok := input["peerid"]
+		//if !ok {
+		//	return "failed to find peerid", nil
+		//}
+		//peerId, err := peer.Decode(peerStr.(string))
+		//if err != nil {
+		//	return err.Error(), nil
+		//}
+		//hexMsg, ok := input["message"] // eg "080412221220b03c17695c0b4817aa6f011efce1bdc6946214763768693063a9a4ad84c74fe95001"
+		//if !ok {
+		//	return "failed to find message", nil
+		//}
+		//msg, err := hex.DecodeString(hexMsg.(string))
+		//if err != nil {
+		//	return "could not decode hex message", nil
+		//}
+		//message := dht_pb.Message{}
+		//err = message.Unmarshal(msg)
+		//if err != nil {
+		//	return err.Error(), nil
+		//}
+		//err = single.MessageSender.SendMessage(context.Background(), peerId, &message)
+		//if err != nil {
+		//	return err.Error(), nil
+		//}
+		//return "thanks friend", nil
+		return reflect.TypeOf(single.MessageSender).String(), nil
 
 	default:
 		return "unrecognized command", nil

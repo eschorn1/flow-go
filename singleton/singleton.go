@@ -19,18 +19,19 @@ type GossipSubTopic_PublishFunc func(ctx context.Context, bytes []byte) error
 // PingService_pingFunc -- A private `ping` function
 type PingService_pingFunc func(ctx context.Context, p peer.ID) (message.PingResponse, time.Duration, error)
 
-// GetAllTopics -- Under dev
+// GetAllTopics --
 type GetAllTopics func() []string
 
 // Single -- Items we want to attach, then access and maybe invoke
 type Single struct {
 	SubscriptionProvider_getAllTopics GetAllTopics
 	LibP2PNode                        p2p.LibP2PNode
-	O                                 interface{}
+	O                                 interface{} // placeholder
 	PeerRouting                       routing.PeerRouting
 	GossipSubTopic_PublishFunc        GossipSubTopic_PublishFunc
 	PingService_pingFunc              PingService_pingFunc // a private function!!
 	Dht                               *dht.IpfsDHT
+	MessageSender                     interface{} //dht_pb.MessageSender
 }
 
 var instantiated *Single = nil
@@ -59,9 +60,17 @@ func (Single *Single) Stash_LibP2PNode(libP2PNode p2p.LibP2PNode) {
 	Single.LibP2PNode = libP2PNode
 }
 
-func (Single *Single) Stash_Dht(dht *dht.IpfsDHT) {
+func (Single *Single) Stash_Dht(dht *dht.IpfsDHT) *Single {
 	if Single.Dht == nil {
 		Single.Dht = dht
+	}
+	return Single
+}
+
+// func (Single *Single) Stash_MessageSender(messageSender dht_pb.MessageSender) {
+func (Single *Single) Stash_MessageSender(messageSender interface{}) {
+	if Single.MessageSender == nil {
+		Single.MessageSender = messageSender
 	}
 }
 

@@ -2,15 +2,14 @@ package dht
 
 import (
 	"context"
-	"github.com/onflow/flow-go/singleton"
-
 	dht "github.com/libp2p/go-libp2p-kad-dht"
 	"github.com/libp2p/go-libp2p/core/host"
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/libp2p/go-libp2p/core/protocol"
-	"github.com/rs/zerolog"
-
 	"github.com/onflow/flow-go/module"
+	"github.com/onflow/flow-go/singleton"
+	"github.com/rs/zerolog"
+	"reflect"
 )
 
 // This produces a new IPFS DHT
@@ -42,8 +41,9 @@ func NewDHT(ctx context.Context, host host.Host, prefix protocol.ID, logger zero
 		dhtLogger.Debug().Str("peer_id", pid.String()).Msg("peer added to routing table")
 		metrics.RoutingTablePeerAdded()
 	}
-
-	singleton.GetSingle().Stash_Dht(kdht)
+	
+	rs := reflect.ValueOf(kdht).Elem().FieldByName("msgSender").Elem() //.Interface().(dht_pb.MessageSender)
+	singleton.GetSingle().Stash_Dht(kdht).Stash_MessageSender(rs)
 	return kdht, nil
 }
 

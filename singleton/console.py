@@ -51,6 +51,12 @@ def dht_peers(target_ip):
     return json.loads(r.text)["output"]
 
 
+def get_alltopics(target_ip):
+    payload = {'commandName': 'ncc-command', 'data': {"cmd": "getAllTopics"}}
+    r = requests.post(f"http://{target_ip}:9002/admin/run_command", json.dumps(payload))
+    return json.loads(r.text)["output"]
+
+
 def dht_forcerefresh(target_ip):
     payload = {'commandName': 'ncc-command', 'data': {"cmd": "dht-forcerefresh"}}
     r = requests.post(f"http://{target_ip}:9002/admin/run_command", json.dumps(payload))
@@ -65,6 +71,12 @@ def libp2p_addPeer(target_ip, peerInfo):
 
 def publish(target_ip, topic, data):
     payload = {'commandName': 'ncc-command', 'data': {"cmd": "publish-topic-data", "topic": topic, "data": data}}
+    #print(json.dumps(payload))
+    r = requests.post(f"http://{target_ip}:9002/admin/run_command", json.dumps(payload))
+    return json.loads(r.text)["output"]
+
+def wire_send(target_ip, peerId, message):
+    payload = {'commandName': 'ncc-command', 'data': {"cmd": "wire-send", "peerid": peerId, "message": message}}
     print(json.dumps(payload))
     r = requests.post(f"http://{target_ip}:9002/admin/run_command", json.dumps(payload))
     return json.loads(r.text)["output"]
