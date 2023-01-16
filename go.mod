@@ -4,6 +4,7 @@ go 1.19
 
 replace github.com/libp2p/go-libp2p-kad-dht => ./go-libp2p-kad-dht
 replace github.com/libp2p/go-libp2p-pubsub => ./go-libp2p-pubsub
+replace github.com/libp2p/go-libp2p => ./go-libp2p
 
 require (
 	cloud.google.com/go/compute v1.6.1
