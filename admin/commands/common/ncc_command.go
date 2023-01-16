@@ -3,6 +3,7 @@ package common
 import (
 	"context"
 	"encoding/hex"
+	dht_pb "github.com/libp2p/go-libp2p-kad-dht/pb"
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/onflow/flow-go/admin"
 	"github.com/onflow/flow-go/admin/commands"
@@ -206,33 +207,32 @@ func (s *NccCommand) Handler(_ context.Context, req *admin.CommandRequest) (inte
 		return outMsg, nil
 
 	case "wire-send":
-		//peerStr, ok := input["peerid"]
-		//if !ok {
-		//	return "failed to find peerid", nil
-		//}
-		//peerId, err := peer.Decode(peerStr.(string))
-		//if err != nil {
-		//	return err.Error(), nil
-		//}
-		//hexMsg, ok := input["message"] // eg "080412221220b03c17695c0b4817aa6f011efce1bdc6946214763768693063a9a4ad84c74fe95001"
-		//if !ok {
-		//	return "failed to find message", nil
-		//}
-		//msg, err := hex.DecodeString(hexMsg.(string))
-		//if err != nil {
-		//	return "could not decode hex message", nil
-		//}
-		//message := dht_pb.Message{}
-		//err = message.Unmarshal(msg)
-		//if err != nil {
-		//	return err.Error(), nil
-		//}
-		//err = single.MessageSender.SendMessage(context.Background(), peerId, &message)
-		//if err != nil {
-		//	return err.Error(), nil
-		//}
-		//return "thanks friend", nil
-		return reflect.TypeOf(single.MessageSender).String(), nil
+		peerStr, ok := input["peerid"]
+		if !ok {
+			return "failed to find peerid", nil
+		}
+		peerId, err := peer.Decode(peerStr.(string))
+		if err != nil {
+			return err.Error(), nil
+		}
+		hexMsg, ok := input["message"] // eg "080412221220b03c17695c0b4817aa6f011efce1bdc6946214763768693063a9a4ad84c74fe95001"
+		if !ok {
+			return "failed to find message", nil
+		}
+		msg, err := hex.DecodeString(hexMsg.(string))
+		if err != nil {
+			return "could not decode hex message", nil
+		}
+		message := dht_pb.Message{}
+		err = message.Unmarshal(msg)
+		if err != nil {
+			return err.Error(), nil
+		}
+		err = single.MessageSender.SendMessage(context.Background(), peerId, &message)
+		if err != nil {
+			return err.Error(), nil
+		}
+		return "thanks friend", nil
 
 	default:
 		return "unrecognized command", nil

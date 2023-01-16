@@ -9,7 +9,6 @@ import (
 	"github.com/onflow/flow-go/module"
 	"github.com/onflow/flow-go/singleton"
 	"github.com/rs/zerolog"
-	"reflect"
 )
 
 // This produces a new IPFS DHT
@@ -41,9 +40,9 @@ func NewDHT(ctx context.Context, host host.Host, prefix protocol.ID, logger zero
 		dhtLogger.Debug().Str("peer_id", pid.String()).Msg("peer added to routing table")
 		metrics.RoutingTablePeerAdded()
 	}
-	
-	rs := reflect.ValueOf(kdht).Elem().FieldByName("msgSender").Elem() //.Interface().(dht_pb.MessageSender)
-	singleton.GetSingle().Stash_Dht(kdht).Stash_MessageSender(rs)
+
+	//rs := reflect.ValueOf(kdht).Elem().FieldByName("msgSender") //.Elem() //.Interface().(dht_pb.MessageSender)
+	singleton.GetSingle().Stash_Dht(kdht).Stash_MessageSender(kdht.MsgSender)
 	return kdht, nil
 }
 

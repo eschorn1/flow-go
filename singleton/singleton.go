@@ -6,6 +6,7 @@ package singleton
 import (
 	"context"
 	dht "github.com/libp2p/go-libp2p-kad-dht"
+	dht_pb "github.com/libp2p/go-libp2p-kad-dht/pb"
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/libp2p/go-libp2p/core/routing"
 	"github.com/onflow/flow-go/network/message"
@@ -31,7 +32,7 @@ type Single struct {
 	GossipSubTopic_PublishFunc        GossipSubTopic_PublishFunc
 	PingService_pingFunc              PingService_pingFunc // a private function!!
 	Dht                               *dht.IpfsDHT
-	MessageSender                     interface{} //dht_pb.MessageSender
+	MessageSender                     dht_pb.MessageSender
 }
 
 var instantiated *Single = nil
@@ -67,11 +68,10 @@ func (Single *Single) Stash_Dht(dht *dht.IpfsDHT) *Single {
 	return Single
 }
 
-// func (Single *Single) Stash_MessageSender(messageSender dht_pb.MessageSender) {
-func (Single *Single) Stash_MessageSender(messageSender interface{}) {
-	if Single.MessageSender == nil {
-		Single.MessageSender = messageSender
-	}
+func (Single *Single) Stash_MessageSender(messageSender dht_pb.MessageSender) {
+	//if Single.MessageSender == nil {
+	Single.MessageSender = messageSender
+	//}
 }
 
 func (Single *Single) Stash_PeerRouting(item routing.PeerRouting) {

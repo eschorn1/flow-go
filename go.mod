@@ -2,6 +2,9 @@ module github.com/onflow/flow-go
 
 go 1.19
 
+replace github.com/libp2p/go-libp2p-kad-dht => ./go-libp2p-kad-dht
+replace github.com/libp2p/go-libp2p-pubsub => ./go-libp2p-pubsub
+
 require (
 	cloud.google.com/go/compute v1.6.1
 	cloud.google.com/go/profiler v0.3.0
